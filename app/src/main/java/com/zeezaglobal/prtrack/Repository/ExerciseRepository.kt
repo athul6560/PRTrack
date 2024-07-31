@@ -10,6 +10,7 @@ class ExerciseRepository(private val exerciseDao: ExerciseDao) {
     }
 
     suspend fun insertExercise(exercise: Exercise) {
+
         exerciseDao.insertExercise(exercise)
     }
 }

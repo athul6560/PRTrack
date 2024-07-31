@@ -1,5 +1,6 @@
 package com.zeezaglobal.prtrack.Activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -14,11 +15,18 @@ class BodyPartActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_body_part)
         val bodyPartTextView: TextView = findViewById(R.id.heading)
+        val button: TextView = findViewById(R.id.button)
 
         // Retrieve the body part information from the intent
         val bodyPart = intent.getStringExtra("BODY_PART")
 
         // Display the body part information in the TextView
         bodyPartTextView.text = bodyPart ?: "No body part information available"
+
+        button.setOnClickListener {
+            val intent = Intent(this, AddExerciseActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }

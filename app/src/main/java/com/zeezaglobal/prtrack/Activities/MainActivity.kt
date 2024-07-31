@@ -1,4 +1,4 @@
-package com.zeezaglobal.prtrack
+package com.zeezaglobal.prtrack.Activities
 
 import android.content.Intent
 import android.graphics.Color
@@ -8,9 +8,7 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.zeezaglobal.prtrack.Activities.BodyPartActivity
+import com.zeezaglobal.prtrack.R
 import com.zeezaglobal.prtrack.Vies.createLineChartView
 
 

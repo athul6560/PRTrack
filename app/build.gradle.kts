@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+
 }
 
 android {
@@ -51,7 +52,8 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
 
-    // To use Kotlin annotation processing tool (kapt)
+   
+
 
 
     // optional - Kotlin Extensions and Coroutines support for Room
