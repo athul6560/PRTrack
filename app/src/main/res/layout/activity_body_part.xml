@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:background="@color/black"
+    android:background="@color/white"
     android:layout_height="match_parent"
     tools:context=".Activities.BodyPartActivity">
 
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textSize="34sp"
         android:textStyle="bold"
         android:text="TextView"
@@ -26,8 +26,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Button"
+        android:text="Add Workout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/heading" />
+
+    <LinearLayout
+        android:id="@+id/chartContainer"
+        android:layout_width="409dp"
+        android:layout_height="490dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

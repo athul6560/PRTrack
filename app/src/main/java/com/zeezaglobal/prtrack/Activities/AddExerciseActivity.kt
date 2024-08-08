@@ -9,8 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.zeezaglobal.prtrack.Entities.Exercise
-import com.zeezaglobal.prtrack.Entities.User
 import com.zeezaglobal.prtrack.R
 import com.zeezaglobal.prtrack.RoomDb.AppDatabase
 import com.zeezaglobal.prtrack.RoomDb.MyApp
@@ -40,8 +38,8 @@ class AddExerciseActivity : AppCompatActivity() {
             // Insert a user
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                    val exercise = Exercise(name = "John Doe", muscleGroup = "Chest", muscleGroupId = 1)
-                    database.exerciseDao().insertExercise(exercise)
+                 /*   val exercise = Exercise(name = "John Doe", muscleGroup = "Chest", muscleGroupId = 1)
+                    database.exerciseDao().insertExercise(exercise)*/
                 }
             }
 
