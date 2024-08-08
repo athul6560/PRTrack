@@ -4,14 +4,14 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.zeezaglobal.prtrack.Entities.Exercise
+import com.zeezaglobal.prtrack.Entities.MuscleGroup
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ExerciseDao {
-    @Query("SELECT * FROM exercises")
-    fun getAllExercises(): Flow<List<Exercise>>
+interface MuscleGroupDao {
+    @Query("SELECT * FROM muscle_groups")
+    fun getAllMuscleGroups(): Flow<List<MuscleGroup>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertExercise(exercise: Exercise)
+    suspend fun insertMuscleGroup(muscleGroup: MuscleGroup)
 }
