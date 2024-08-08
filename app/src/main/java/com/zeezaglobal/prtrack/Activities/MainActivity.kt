@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.zeezaglobal.prtrack.R
 import com.zeezaglobal.prtrack.Vies.createLineChartView
 
@@ -45,21 +46,27 @@ class MainActivity : AppCompatActivity() {
         relLayoutTriceps.setOnClickListener(clickListener)
         relLayoutLeg.setOnClickListener(clickListener)
         relLayoutShoulder.setOnClickListener(clickListener)
+        val dataPoints = listOf(
+            Pair("Mon", 30f),
+            Pair("Tue", 50f),
+            Pair("Wed", 45f),
+            Pair("Thu", 60f),
+            Pair("Fri", 55f),
+            Pair("Sat", 70f),
+            Pair("Sun", 65f)
+        )
+
+        // Create and add the LineChartView to the chartContainer
         createLineChartView(
             context = this,
             parent = parentLayout,
-            dataPoints = listOf(
-                Pair("Mon", 10f),
-                Pair("Tue", 80f),
-                Pair("Wed", 30f)
-
-            ),
-            yLabels = listOf("0kg", "20kg", "40kg", "60kg"),
+            dataPoints = dataPoints,
+            maxDataPointY = 100f,
             xAxisColor = Color.BLACK,
-            yAxisColor = Color.GREEN,
-            gridColor = Color.GRAY,
-            lineColor = Color.BLUE,
-            maxDataPointY = 60f
+            yAxisColor = Color.BLACK,
+            gridColor = Color.LTGRAY,
+            barColor = ContextCompat.getColor(this, R.color.teal),
+            yAxisSteps = 5  // Number of steps for Y-axis labels
         )
     }
 

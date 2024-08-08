@@ -8,12 +8,12 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import kotlin.math.max
 import kotlin.math.min
 
 class LineChartView(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
 
-    // Mutable properties with default values
     var dataPoints: List<Pair<String, Float>> = listOf(
         Pair("Mon", 30f),
         Pair("Tue", 50f),
@@ -23,14 +23,12 @@ class LineChartView(context: Context, attrs: AttributeSet? = null) : View(contex
         Pair("Sat", 70f),
         Pair("Sun", 65f)
     )
-    var yLabels: List<String> = listOf("0kg", "20kg", "40kg", "60kg", "80kg")
+    var yLabels: List<String> = listOf("5kg", "10kg", "15kg", "20kg")
     var maxDataPointY: Float = 80f
 
-    // Paint objects with default styles
-    val paint = Paint().apply {
+    val barPaint = Paint().apply {
         color = Color.BLUE
-        strokeWidth = 5f
-        style = Paint.Style.STROKE
+        style = Paint.Style.FILL
     }
 
     val axisPaint = Paint().apply {
@@ -47,7 +45,13 @@ class LineChartView(context: Context, attrs: AttributeSet? = null) : View(contex
         color = Color.LTGRAY
         strokeWidth = 2f
         style = Paint.Style.STROKE
-        pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
+    }
+
+    val dottedLinePaint = Paint().apply {
+        color = Color.RED
+        strokeWidth = 3f
+        style = Paint.Style.STROKE
+        pathEffect = DashPathEffect(floatArrayOf(10f, 20f), 0f)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -59,35 +63,30 @@ class LineChartView(context: Context, attrs: AttributeSet? = null) : View(contex
         val chartWidth = width - 2 * padding
         val chartHeight = height - 2 * padding
 
+        val barWidth = (chartWidth / dataPoints.size) - 20f
+        val cornerRadius = 20f
+
         // Draw X and Y axes
         canvas.drawLine(originX, originY, originX + chartWidth, originY, axisPaint)
         canvas.drawLine(originX, originY, originX, originY - chartHeight, axisPaint)
 
         // Draw the grid
-        // Horizontal lines
         yLabels.forEachIndexed { index, _ ->
             val y = originY - index / (yLabels.size - 1).toFloat() * chartHeight
             canvas.drawLine(originX, y, originX + chartWidth, y, gridPaint)
         }
 
-        // Vertical lines
-        dataPoints.forEachIndexed { index, _ ->
-            val x = originX + index / (dataPoints.size - 1).toFloat() * chartWidth
-            canvas.drawLine(x, originY, x, originY - chartHeight, gridPaint)
-        }
-
-        // Draw the line chart
-        for (i in 0 until dataPoints.size - 1) {
-            val startX = originX + i / (dataPoints.size - 1).toFloat() * chartWidth
-            val startY = originY - (dataPoints[i].second / maxDataPointY) * chartHeight
-            val stopX = originX + (i + 1) / (dataPoints.size - 1).toFloat() * chartWidth
-            val stopY = originY - (dataPoints[i + 1].second / maxDataPointY) * chartHeight
-            canvas.drawLine(startX, startY, stopX, stopY, paint)
+        // Draw the bars with rounded corners
+        dataPoints.forEachIndexed { index, pair ->
+            val barLeft = originX + index * (barWidth + 20f)
+            val barRight = barLeft + barWidth
+            val barTop = originY - (pair.second / maxDataPointY) * chartHeight
+            canvas.drawRoundRect(barLeft, barTop, barRight, originY, cornerRadius, cornerRadius, barPaint)
         }
 
         // Draw X axis labels
         dataPoints.forEachIndexed { index, pair ->
-            val x = originX + index / (dataPoints.size - 1).toFloat() * chartWidth
+            val x = originX + index * (barWidth + 20f) + barWidth / 2
             canvas.drawText(pair.first, x - 30f, originY + 40f, textPaint)
         }
 
@@ -96,5 +95,49 @@ class LineChartView(context: Context, attrs: AttributeSet? = null) : View(contex
             val y = originY - index / (yLabels.size - 1).toFloat() * chartHeight
             canvas.drawText(label, originX - 70f, y + 10f, textPaint)
         }
+
+        // Draw the dotted red line from the Y-axis to the last data point
+        if (dataPoints.isNotEmpty()) {
+            val lastDataPoint = dataPoints.last()
+            val lastBarTop = originY - (lastDataPoint.second / maxDataPointY) * chartHeight
+            canvas.drawLine(originX, lastBarTop, originX + chartWidth, lastBarTop, dottedLinePaint)
+        }
     }
+}
+
+fun generateYLabels(maxValue: Float, steps: Int): List<String> {
+    val interval = maxValue / steps
+    return (0..steps).map { "${(it * interval).toInt()}kg" }
+}
+
+fun createLineChartView(
+    context: Context,
+    parent: ViewGroup,
+    dataPoints: List<Pair<String, Float>>,
+    maxDataPointY: Float,
+    xAxisColor: Int = Color.BLACK,
+    yAxisColor: Int = Color.BLACK,
+    gridColor: Int = Color.LTGRAY,
+    barColor: Int = Color.BLUE,
+    yAxisSteps: Int = 4
+): LineChartView {
+    val yLabels = generateYLabels(maxDataPointY, yAxisSteps)
+
+    val barChartView = LineChartView(context).apply {
+        this.dataPoints = dataPoints
+        this.yLabels = yLabels
+        this.maxDataPointY = maxDataPointY
+        this.axisPaint.color = xAxisColor
+        this.gridPaint.color = gridColor
+        this.barPaint.color = barColor
+    }
+
+    val layoutParams = ViewGroup.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    )
+    barChartView.layoutParams = layoutParams
+    parent.addView(barChartView)
+
+    return barChartView
 }
