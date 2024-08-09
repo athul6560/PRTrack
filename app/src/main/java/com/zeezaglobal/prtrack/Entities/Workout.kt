@@ -1,11 +1,20 @@
 package com.zeezaglobal.prtrack.Entities
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "workouts")
+@Entity(
+    tableName = "workout",
+    foreignKeys = [ForeignKey(
+        entity = BodyPart::class,
+        parentColumns = ["id"],
+        childColumns = ["bodyPartId"],
+        onDelete = ForeignKey.CASCADE
+    )]
+)
 data class Workout(
-    @PrimaryKey(autoGenerate = true) val workoutId: Long = 0,
-    val name: String,         // Name of the workout
-    val bodyPart: String      // Body part targeted by the workout (e.g., Chest, Legs)
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val workoutName: String,
+    val bodyPartId: Int
 )

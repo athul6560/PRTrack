@@ -8,8 +8,6 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.zeezaglobal.prtrack.R
 import com.zeezaglobal.prtrack.Vies.createLineChartView
@@ -40,7 +38,7 @@ class BodyPartActivity : AppCompatActivity() {
 
         // Display the body part information in the TextView
         bodyPartTextView.text = bodyPart ?: "No body part information available"
-        val workoutId = 1L
+        val workoutId = 1
 
         viewModel.getWorkoutLogs(workoutId).observe(this) { workoutLogs ->
             val dataPoints = workoutLogs.map {
@@ -61,8 +59,10 @@ class BodyPartActivity : AppCompatActivity() {
             )
         }
         button.setOnClickListener {
-                val intent = Intent(this, AddExerciseActivity::class.java)
-                startActivity(intent)
+            val intent = Intent(this, AddWorkoutActivity::class.java).apply {
+                putExtra("BODY_PART", bodyPart)
+            }
+            startActivity(intent)
             }
 
         }

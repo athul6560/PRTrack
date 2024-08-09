@@ -20,12 +20,7 @@ interface WorkoutLogDao {
     @Delete
     suspend fun deleteWorkoutLog(log: WorkoutLog)
 
-    @Query("SELECT * FROM workout_logs WHERE logId = :id")
-    suspend fun getWorkoutLogById(id: Long): WorkoutLog?
+    @Query("SELECT * FROM workout_log WHERE workoutId = :workoutId")
+    fun getWorkoutLogsByWorkoutId(workoutId: Int): Flow<List<WorkoutLog>>
 
-    @Query("SELECT * FROM workout_logs WHERE workoutId = :workoutId")
-    fun getLogsByWorkout(workoutId: Long): Flow<List<WorkoutLog>>
-
-    @Query("SELECT * FROM workout_logs WHERE workoutId = :workoutId ORDER BY date ASC")
-    fun getLogsByWorkoutSortedByDate(workoutId: Long): Flow<List<WorkoutLog>>
 }

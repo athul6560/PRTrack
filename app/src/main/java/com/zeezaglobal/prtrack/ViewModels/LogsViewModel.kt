@@ -12,7 +12,7 @@ import com.zeezaglobal.prtrack.RoomDb.MyApp
 class LogsViewModel (application: Application) : AndroidViewModel(application) {
     private val workoutLogDao: WorkoutLogDao =(application as MyApp).database.workoutLogDao()
 
-    fun getWorkoutLogs(workoutId: Long): LiveData<List<WorkoutLog>> {
-        return workoutLogDao.getLogsByWorkoutSortedByDate(workoutId).asLiveData()
+    fun getWorkoutLogs(workoutId: Int): LiveData<List<WorkoutLog>> {
+        return workoutLogDao.getWorkoutLogsByWorkoutId(workoutId).asLiveData()
     }
 }

@@ -1,14 +1,12 @@
 package com.zeezaglobal.prtrack.Activities
 
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.zeezaglobal.prtrack.Entities.Workout
 import com.zeezaglobal.prtrack.R
 import com.zeezaglobal.prtrack.RoomDb.AppDatabase
 import com.zeezaglobal.prtrack.RoomDb.MyApp
@@ -17,7 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class AddExerciseActivity : AppCompatActivity() {
+class AddWorkoutActivity : AppCompatActivity() {
 
     private lateinit var database: AppDatabase
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,19 +25,29 @@ class AddExerciseActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_exercise)
         val button: TextView = findViewById(R.id.add_btn)
         val exerciseEditText: TextView = findViewById(R.id.editTextText)
-        val weightEditText: TextView = findViewById(R.id.editTextNumber)
+
 
 
 
 
         button.setOnClickListener {
-            val exerciseName = exerciseEditText.text.toString()
-            val weight = weightEditText.text.toString().toIntOrNull() ?: 0
-            // Insert a user
+
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
-                 /*   val exercise = Exercise(name = "John Doe", muscleGroup = "Chest", muscleGroupId = 1)
-                    database.exerciseDao().insertExercise(exercise)*/
+
+                    val bodyPartName = intent.getStringExtra("BODY_PART")
+                    val bodyPartId = getBodyPartIdUsingIntent(bodyPartName)
+
+                    if (bodyPartId != null) {
+                        val exercise = Workout(
+                            workoutName = exerciseEditText.text.toString(),
+                            bodyPartId = bodyPartId
+                        )
+                        Log.d("dsvdsv","sdfwefwe")
+                        database.workoutDao().insertWorkout(exercise)
+                    } else {
+                       Log.d("dsvdsv","sdfwefwe")
+                    }
                 }
             }
 
@@ -47,5 +55,13 @@ class AddExerciseActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    private suspend fun getBodyPartIdUsingIntent(bodyPartName: String?): Int? {
+        return bodyPartName?.let { name ->
+            withContext(Dispatchers.IO) {
+                database.bodyPartDao().getBodyPartIdByName(name)
+            }
+        }
     }
 }

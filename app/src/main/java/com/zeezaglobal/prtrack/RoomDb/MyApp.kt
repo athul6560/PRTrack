@@ -15,9 +15,9 @@ class MyApp: Application() {
             "my-database"
         ).build()
 
-        val workoutDao = database.workoutDao()
-        val workoutLogDao = database.workoutLogDao()
+        val bodyPartDao = database.bodyPartDao()
+
         // Populate the database with dummy data
-        populateDatabase(workoutDao, workoutLogDao)
+       // populateDatabase(bodyPartDao)
     }
 }
