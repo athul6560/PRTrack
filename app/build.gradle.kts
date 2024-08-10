@@ -7,7 +7,10 @@ plugins {
 android {
     namespace = "com.zeezaglobal.prtrack"
     compileSdk = 34
-
+    lint {
+        baseline = file("lint-baseline.xml")
+        // Add other lint configurations if needed
+    }
     defaultConfig {
         applicationId = "com.zeezaglobal.prtrack"
         minSdk = 24
