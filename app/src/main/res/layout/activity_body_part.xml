@@ -31,15 +31,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/heading" />
 
-    <LinearLayout
-        android:id="@+id/chartContainer"
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="409dp"
-        android:layout_height="490dp"
+        android:layout_height="572dp"
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/recycle_review"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

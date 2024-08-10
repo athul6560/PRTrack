@@ -9,7 +9,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.zeezaglobal.prtrack.R
+import com.zeezaglobal.prtrack.RRAdapters.WorkoutLogAdapter
+import com.zeezaglobal.prtrack.Utils.getSampleWorkoutLogs
 import com.zeezaglobal.prtrack.Vies.createLineChartView
 import com.zeezaglobal.prtrack.ViewModels.LogsViewModel
 import java.text.SimpleDateFormat
@@ -27,37 +31,25 @@ class BodyPartActivity : AppCompatActivity() {
         setContentView(R.layout.activity_body_part)
         val bodyPartTextView: TextView = findViewById(R.id.heading)
         val button: TextView = findViewById(R.id.button)
-        val parentLayout = findViewById<LinearLayout>(R.id.chartContainer)
+     
         // Retrieve the body part information from the intent
         val bodyPart = intent.getStringExtra("BODY_PART")
 
+        val recyclerView: RecyclerView = findViewById(R.id.recycle_review)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
+        val workoutLogs=getSampleWorkoutLogs()
+        val adapter = WorkoutLogAdapter(workoutLogs, this)
+        recyclerView.adapter = adapter
 
         viewModel = ViewModelProvider(this).get(LogsViewModel::class.java)
 
 
-        // Display the body part information in the TextView
+     
         bodyPartTextView.text = bodyPart ?: "No body part information available"
         val workoutId = 1
 
-        viewModel.getWorkoutLogs(workoutId).observe(this) { workoutLogs ->
-            val dataPoints = workoutLogs.map {
-                val dayOfWeek = SimpleDateFormat("EEE", Locale.getDefault()).format(Date(it.date))
-                Pair(dayOfWeek, it.weight.toFloat())
-            }
-
-            createLineChartView(
-                context = this,
-                parent = parentLayout,
-                dataPoints = dataPoints,
-                maxDataPointY = 100f,
-                xAxisColor = Color.BLACK,
-                yAxisColor = Color.BLACK,
-                gridColor = Color.LTGRAY,
-                barColor = ContextCompat.getColor(this, R.color.teal),
-                yAxisSteps = 5
-            )
-        }
+      
         button.setOnClickListener {
             val intent = Intent(this, AddWorkoutActivity::class.java).apply {
                 putExtra("BODY_PART", bodyPart)
