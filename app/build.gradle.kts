@@ -8,8 +8,10 @@ android {
     namespace = "com.zeezaglobal.prtrack"
     compileSdk = 34
     lint {
-        baseline = file("lint-baseline.xml")
-        // Add other lint configurations if needed
+        checkAllWarnings = true
+        warningsAsErrors = true
+        checkReleaseBuilds = false // Set to true if you want to check release builds
+        // Add more configurations if needed
     }
     defaultConfig {
         applicationId = "com.zeezaglobal.prtrack"
