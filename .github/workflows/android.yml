@@ -35,3 +35,9 @@ jobs:
         with:
           name: app-build
           path: app/build/outputs/apk/release/ # Adjust path to where your APKs are generated
+
+      - name: Upload Lint Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: lint-report
+          path: app/build/reports/lint-results-debug.html # Adjust path if needed
