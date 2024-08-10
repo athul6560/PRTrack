@@ -43,10 +43,10 @@ class AddWorkoutActivity : AppCompatActivity() {
                             workoutName = exerciseEditText.text.toString(),
                             bodyPartId = bodyPartId
                         )
-                        Log.d("dsvdsv","sdfwefwe")
+
                         database.workoutDao().insertWorkout(exercise)
                     } else {
-                       Log.d("dsvdsv","sdfwefwe")
+
                     }
                 }
             }
