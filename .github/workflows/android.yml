@@ -26,3 +26,12 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
+
+      - name: Run Lint Check
+        run: ./gradlew lint
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-build
+          path: app/build/outputs/apk/release/ # Adjust path to where your APKs are generated
