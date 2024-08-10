@@ -11,7 +11,7 @@ android {
         checkAllWarnings = true
         warningsAsErrors = true
         checkReleaseBuilds = false // Set to true if you want to check release builds
-        // Add more configurations if needed
+        baseline = file("lint-baseline.xml")
     }
     defaultConfig {
         applicationId = "com.zeezaglobal.prtrack"
