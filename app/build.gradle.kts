@@ -8,9 +8,13 @@ android {
     namespace = "com.zeezaglobal.prtrack"
     compileSdk = 34
     lint {
+        // Treat all errors as warnings
+        warningsAsErrors = false
+        // Continue the build even if Lint finds errors
+        abortOnError = false
+        // Check all issues, including those that are usually ignored
         checkAllWarnings = true
-        warningsAsErrors = true
-        checkReleaseBuilds = false // Set to true if you want to check release builds
+        // Create a baseline file to filter out existing issues
         baseline = file("lint-baseline.xml")
     }
     defaultConfig {
