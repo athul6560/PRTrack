@@ -30,10 +30,10 @@ class WorkoutLogAdapter (
         val log = workoutLogs[position]
         holder.workoutTextView.text = log.workoutName
 
-       // val dataPoints = transformLogsToDataPoints(workoutLogs)
+        val dataPoints = transformLogsToDataPoints(workoutLogs)
 
 
- /*       createLineChartView(
+        createLineChartView(
             context = context,
             parent = holder.chartContainer,
             dataPoints = dataPoints,
@@ -43,16 +43,16 @@ class WorkoutLogAdapter (
             gridColor = Color.LTGRAY,
             barColor = ContextCompat.getColor(context, R.color.teal),
             yAxisSteps = 5
-        )*/
+        )
     }
 
-  /*  private fun transformLogsToDataPoints(workoutLogs: List<WorkoutLogWithName>): List<Pair<String, Float>> {
-  *//*      return workoutLogs.map {
-            val dayOfWeek = SimpleDateFormat("EEE", Locale.getDefault()).format(Date(it.date))
-            Pair(dayOfWeek, it.weight.toFloat())
-        }*//*
-        return null
-    }*/
+    private fun transformLogsToDataPoints(workoutLogs: List<WorkoutLogWithName>): List<Pair<String, Float>> {
+        return workoutLogs.map {
+            val dayOfWeek = SimpleDateFormat("EEE", Locale.getDefault()).format(Date(it.workoutLog.date))
+            Pair(dayOfWeek, it.workoutLog.weight.toFloat())
+        }
+
+    }
 
     override fun getItemCount(): Int = workoutLogs.size
 

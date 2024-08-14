@@ -62,7 +62,7 @@ class BodyPartActivity : AppCompatActivity() {
         viewModel.getWorkoutLogs(1)
 
 
-        bodyPartTextView.text = bodyPart ?: "No body part information available"
+        bodyPartTextView.text = bodyPart+" Workouts"
 
 
       
