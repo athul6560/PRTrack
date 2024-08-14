@@ -1,10 +1,11 @@
 package com.zeezaglobal.prtrack.RoomDb
 
 import android.app.Application
+import android.util.Log
 import androidx.room.Room
 import com.zeezaglobal.prtrack.Utils.populateDatabase
 
-class MyApp: Application() {
+class MyApp : Application() {
     lateinit var database: AppDatabase
 
     override fun onCreate() {
@@ -18,6 +19,6 @@ class MyApp: Application() {
         val bodyPartDao = database.bodyPartDao()
 
         // Populate the database with dummy data
-       // populateDatabase(bodyPartDao)
+        // populateDatabase(bodyPartDao)
     }
 }

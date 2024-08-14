@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.zeezaglobal.prtrack.Entities.WorkoutLog
+import com.zeezaglobal.prtrack.Entities.WorkoutLogWithName
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,7 +21,9 @@ interface WorkoutLogDao {
     @Delete
     suspend fun deleteWorkoutLog(log: WorkoutLog)
 
-    @Query("SELECT * FROM workout_log WHERE workoutId = :workoutId")
-    fun getWorkoutLogsByWorkoutId(workoutId: Int): Flow<List<WorkoutLog>>
+
+    @Query("SELECT workout_log.*, workout.workoutName FROM workout_log INNER JOIN workout ON workout_log.workoutId = workout.id WHERE workout_log.workoutId = :workoutId")
+    fun getWorkoutLogsByWorkoutId(workoutId: Int): Flow<List<WorkoutLogWithName>>
+
 
 }

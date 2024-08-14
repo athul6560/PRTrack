@@ -5,9 +5,11 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.zeezaglobal.prtrack.Entities.WorkoutLog
+import com.zeezaglobal.prtrack.Entities.WorkoutLogWithName
 import com.zeezaglobal.prtrack.R
 import com.zeezaglobal.prtrack.Vies.createLineChartView
 import java.text.SimpleDateFormat
@@ -15,7 +17,7 @@ import java.util.Date
 import java.util.Locale
 
 class WorkoutLogAdapter (
-    private val workoutLogs: List<WorkoutLog>,
+    private var workoutLogs: List<WorkoutLogWithName>,
     private val context: Context
 ) : RecyclerView.Adapter<WorkoutLogAdapter.ViewHolder>() {
 
@@ -25,10 +27,13 @@ class WorkoutLogAdapter (
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val logs = workoutLogs[position]
-        val dataPoints = transformLogsToDataPoints(logs)
+        val log = workoutLogs[position]
+        holder.workoutTextView.text = log.workoutName
 
-        createLineChartView(
+       // val dataPoints = transformLogsToDataPoints(workoutLogs)
+
+
+ /*       createLineChartView(
             context = context,
             parent = holder.chartContainer,
             dataPoints = dataPoints,
@@ -38,19 +43,25 @@ class WorkoutLogAdapter (
             gridColor = Color.LTGRAY,
             barColor = ContextCompat.getColor(context, R.color.teal),
             yAxisSteps = 5
-        )
+        )*/
     }
 
-    private fun transformLogsToDataPoints(logs: WorkoutLog): List<Pair<String, Float>> {
-        return workoutLogs.map {
+  /*  private fun transformLogsToDataPoints(workoutLogs: List<WorkoutLogWithName>): List<Pair<String, Float>> {
+  *//*      return workoutLogs.map {
             val dayOfWeek = SimpleDateFormat("EEE", Locale.getDefault()).format(Date(it.date))
             Pair(dayOfWeek, it.weight.toFloat())
-        }
-    }
+        }*//*
+        return null
+    }*/
 
     override fun getItemCount(): Int = workoutLogs.size
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val chartContainer: ViewGroup = itemView.findViewById(R.id.chartContainer)
+        val workoutTextView: TextView = itemView.findViewById(R.id.workout_textview)
+    }
+    fun updateData(newWorkoutLogs: List<WorkoutLogWithName>) {
+        workoutLogs = newWorkoutLogs
+        notifyDataSetChanged() // Notify the adapter to refresh the data
     }
 }

@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import com.zeezaglobal.prtrack.R
 import kotlin.math.max
 import kotlin.math.min
 
@@ -78,6 +79,13 @@ class LineChartView(context: Context, attrs: AttributeSet? = null) : View(contex
 
         // Draw the bars with rounded corners
         dataPoints.forEachIndexed { index, pair ->
+            // Change the bar color to grey for all bars except the last one
+            if (index == dataPoints.size - 1) {
+                barPaint.color = context.getColor(R.color.teal) // Color for the last bar
+            } else {
+                barPaint.color = Color.GRAY // Color for the other bars
+            }
+
             val barLeft = originX + index * (barWidth + 20f)
             val barRight = barLeft + barWidth
             val barTop = originY - (pair.second / maxDataPointY) * chartHeight
@@ -101,14 +109,24 @@ class LineChartView(context: Context, attrs: AttributeSet? = null) : View(contex
             val lastDataPoint = dataPoints.last()
             val lastBarTop = originY - (lastDataPoint.second / maxDataPointY) * chartHeight
             canvas.drawLine(originX, lastBarTop, originX + chartWidth, lastBarTop, dottedLinePaint)
-        }
-    }
-}
 
-fun generateYLabels(maxValue: Float, steps: Int): List<String> {
-    val interval = maxValue / steps
-    return (0..steps).map { "${(it * interval).toInt()}kg" }
-}
+            // Draw the last data point value on top of the last bar
+            val lastBarLeft = originX + (dataPoints.size - 1) * (barWidth + 20f)
+            val lastBarRight = lastBarLeft + barWidth
+            val labelX = (lastBarLeft + lastBarRight) / 2
+            canvas.drawText(
+                "${lastDataPoint.second}kg",
+                labelX - 30f,
+                lastBarTop - 10f,  // Adjust position to be slightly above the bar
+                textPaint
+            )
+        }
+    }}
+
+    fun generateYLabels(maxValue: Float, steps: Int): List<String> {
+        val interval = maxValue / steps
+        return (0..steps).map { "${(it * interval).toInt()}kg" }
+    }
 
 fun createLineChartView(
     context: Context,
