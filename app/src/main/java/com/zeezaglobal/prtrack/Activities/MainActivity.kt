@@ -10,7 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.zeezaglobal.prtrack.R
-import com.zeezaglobal.prtrack.Vies.createLineChartView
+import com.zeezaglobal.prtrack.Views.createLineChartView
 
 
 class MainActivity : AppCompatActivity() {
@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             xAxisColor = Color.BLACK,
             yAxisColor = Color.BLACK,
             gridColor = Color.LTGRAY,
-            barColor = ContextCompat.getColor(this, R.color.teal),
+            barColor = ContextCompat.getColor(this, R.color.blue),
             yAxisSteps = 5  // Number of steps for Y-axis labels
         )
     }

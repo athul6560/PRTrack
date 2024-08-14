@@ -1,4 +1,4 @@
-package com.zeezaglobal.prtrack.Vies
+package com.zeezaglobal.prtrack.Views
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,12 +6,9 @@ import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import com.zeezaglobal.prtrack.R
-import kotlin.math.max
-import kotlin.math.min
 
 class LineChartView(context: Context, attrs: AttributeSet? = null) : View(context, attrs) {
 
@@ -33,12 +30,12 @@ class LineChartView(context: Context, attrs: AttributeSet? = null) : View(contex
     }
 
     val axisPaint = Paint().apply {
-        color = Color.BLACK
+        color = Color.LTGRAY
         strokeWidth = 3f
     }
 
     val textPaint = Paint().apply {
-        color = Color.BLACK
+        color = Color.LTGRAY
         textSize = 30f
     }
 
@@ -81,7 +78,7 @@ class LineChartView(context: Context, attrs: AttributeSet? = null) : View(contex
         dataPoints.forEachIndexed { index, pair ->
             // Change the bar color to grey for all bars except the last one
             if (index == dataPoints.size - 1) {
-                barPaint.color = context.getColor(R.color.teal) // Color for the last bar
+                barPaint.color = context.getColor(R.color.blue) // Color for the last bar
             } else {
                 barPaint.color = Color.GRAY // Color for the other bars
             }

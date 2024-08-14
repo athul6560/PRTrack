@@ -8,10 +8,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.zeezaglobal.prtrack.Entities.WorkoutLog
 import com.zeezaglobal.prtrack.Entities.WorkoutLogWithName
 import com.zeezaglobal.prtrack.R
-import com.zeezaglobal.prtrack.Vies.createLineChartView
+import com.zeezaglobal.prtrack.Views.createLineChartView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -38,10 +37,10 @@ class WorkoutLogAdapter (
             parent = holder.chartContainer,
             dataPoints = dataPoints,
             maxDataPointY = 100f,
-            xAxisColor = Color.BLACK,
-            yAxisColor = Color.BLACK,
+            xAxisColor = Color.LTGRAY,
+            yAxisColor = Color.LTGRAY,
             gridColor = Color.LTGRAY,
-            barColor = ContextCompat.getColor(context, R.color.teal),
+            barColor = ContextCompat.getColor(context, R.color.blue),
             yAxisSteps = 5
         )
     }
