@@ -27,15 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
           />
+
     </LinearLayout>
 
-    <Button
-        android:id="@+id/submit_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Submit"
-        android:visibility="gone"
-        android:layout_below="@id/linearLayout_weight_picker"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"/>
+
 </RelativeLayout>

@@ -76,14 +76,15 @@ class BodyPartActivity : AppCompatActivity() {
         viewModel.getWorkoutLogs(1)
 
 
-        bodyPartTextView.text = bodyPart+" Workouts"
+        bodyPartTextView.text = bodyPart + " Workouts"
 
 
-      
+
         button.setOnClickListener {
             showAddWorkoutDialog(bodyPart)
 
-        }}
+        }
+    }
 
     private fun showAddWorkoutDialog(bodyPart: String?) {
         val dialogBuilder = AlertDialog.Builder(this)
@@ -103,20 +104,41 @@ class BodyPartActivity : AppCompatActivity() {
         }.attach()
 
 
-
-
         val alertDialog = dialogBuilder.create()
         val pagerAdapter = viewPager.adapter as WorkoutPagerAdapter
 
-        val page1View = (pagerAdapter as WorkoutPagerAdapter).createViewHolder(viewPager, 0).itemView
+        val page1View =
+            (pagerAdapter as WorkoutPagerAdapter).createViewHolder(viewPager, 0).itemView
         val editTextWorkoutName: EditText = page1View.findViewById(R.id.edit_text_workout_name)
 
-        val page2View = (pagerAdapter as WorkoutPagerAdapter).createViewHolder(viewPager, 1).itemView
+        val page2View =
+            (pagerAdapter as WorkoutPagerAdapter).createViewHolder(viewPager, 1).itemView
         val numberPickerMain: NumberPicker = page2View.findViewById(R.id.numberPicker_main)
         val numberPickerDecimal: NumberPicker = page2View.findViewById(R.id.numberPicker_decimal)
-        val submitButton: Button = page2View.findViewById(R.id.submit_button)
+        val submitButton: Button = dialogView.findViewById(R.id.submit_button)
+        numberPickerMain.maxValue = 50
+        numberPickerMain.minValue = 1
         alertDialog.show()
+        submitButton.setOnClickListener {
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
 
+                    val bodyPartName = intent.getStringExtra("BODY_PART")
+                    val bodyPartId = getBodyPartIdUsingIntent(bodyPartName)
+
+                    if (bodyPartId != null) {
+                        val exercise = Workout(
+                            workoutName = "athul",
+                            bodyPartId = bodyPartId
+                        )
+
+                        database.workoutDao().insertWorkout(exercise)
+                    } else {
+
+                    }
+                }
+            }
+        }
 
 
     }
@@ -126,6 +148,7 @@ class BodyPartActivity : AppCompatActivity() {
         // This could be a lookup from a predefined list or another data source
         return 1 // Placeholder value
     }
+
     private suspend fun getBodyPartIdUsingIntent(bodyPartName: String?): Int? {
         return bodyPartName?.let { name ->
             withContext(Dispatchers.IO) {
@@ -133,4 +156,4 @@ class BodyPartActivity : AppCompatActivity() {
             }
         }
     }
-    }
+}
