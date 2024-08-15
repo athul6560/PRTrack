@@ -3,34 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@android:color/white"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@android:color/white">
+    android:padding="16dp">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+    <EditText
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_gravity="center"
-        android:background="@android:color/white"
-        android:clipToPadding="false"
-        android:padding="16dp"
-        android:scrollbars="none" />
-<Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/submit_button"/>
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        app:tabIndicatorColor="@android:color/black"
-        app:tabIndicatorHeight="4dp"
-        app:tabSelectedTextColor="@android:color/black"
-        app:tabTextColor="@android:color/darker_gray"
-        app:tabMode="fixed" />
+        android:id="@+id/workoutname"
+        android:hint="Workout" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/weight"
+        android:inputType="numberDecimal"
+        android:hint="Weight" />
+
+    <Button
+        android:id="@+id/submit_button"
+        android:layout_width="wrap_content"
+        android:text="submit"
+        android:layout_height="wrap_content" />
+
 
 </LinearLayout>

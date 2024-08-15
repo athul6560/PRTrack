@@ -23,11 +23,12 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zeezaglobal.prtrack.Entities.Workout
+import com.zeezaglobal.prtrack.Entities.WorkoutLog
 import com.zeezaglobal.prtrack.R
 import com.zeezaglobal.prtrack.RRAdapters.WorkoutLogAdapter
-import com.zeezaglobal.prtrack.RRAdapters.WorkoutPagerAdapter
 import com.zeezaglobal.prtrack.RoomDb.AppDatabase
 import com.zeezaglobal.prtrack.RoomDb.MyApp
+import com.zeezaglobal.prtrack.Utils.getCurrentTimeInEpoch
 import com.zeezaglobal.prtrack.Utils.getSampleWorkoutLogs
 
 import com.zeezaglobal.prtrack.ViewModels.LogsViewModel
@@ -92,47 +93,36 @@ class BodyPartActivity : AppCompatActivity() {
         val dialogView = inflater.inflate(R.layout.dialog_add_workout, null)
         dialogBuilder.setView(dialogView)
 
-        val viewPager: ViewPager2 = dialogView.findViewById(R.id.viewPager)
-        val tabLayout: TabLayout = dialogView.findViewById(R.id.tabLayout)
-
-// Set up the ViewPager2 adapter
-        viewPager.adapter = WorkoutPagerAdapter(this)
-
-// Set up the TabLayoutMediator to connect the TabLayout with the ViewPager2
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            // You don't need to set anything specific here for dots indicator
-        }.attach()
-
 
         val alertDialog = dialogBuilder.create()
-        val pagerAdapter = viewPager.adapter as WorkoutPagerAdapter
 
-        val page1View =
-            (pagerAdapter as WorkoutPagerAdapter).createViewHolder(viewPager, 0).itemView
-        val editTextWorkoutName: EditText = page1View.findViewById(R.id.edit_text_workout_name)
 
-        val page2View =
-            (pagerAdapter as WorkoutPagerAdapter).createViewHolder(viewPager, 1).itemView
-        val numberPickerMain: NumberPicker = page2View.findViewById(R.id.numberPicker_main)
-        val numberPickerDecimal: NumberPicker = page2View.findViewById(R.id.numberPicker_decimal)
         val submitButton: Button = dialogView.findViewById(R.id.submit_button)
-        numberPickerMain.maxValue = 50
-        numberPickerMain.minValue = 1
+        val editTextWorkoutName: EditText = dialogView.findViewById(R.id.workoutname)
+        val weightEdittext: EditText = dialogView.findViewById(R.id.weight)
+
         alertDialog.show()
         submitButton.setOnClickListener {
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {
 
                     val bodyPartName = intent.getStringExtra("BODY_PART")
-                    val bodyPartId = getBodyPartIdUsingIntent(bodyPartName)
+                    val bodyPartId = getWorkoutIdFromBodyPart(bodyPartName)
 
                     if (bodyPartId != null) {
                         val exercise = Workout(
-                            workoutName = "athul",
+                            workoutName = editTextWorkoutName.text.toString(),
                             bodyPartId = bodyPartId
+                        )
+                        val workoutlog = WorkoutLog(
+                            weight = weightEdittext.text.toString().toFloatOrNull() ?: 0.0f,
+                            date = getCurrentTimeInEpoch(),
+                            workoutId = 1
                         )
 
                         database.workoutDao().insertWorkout(exercise)
+                        database.workoutLogDao().insertWorkoutLog(workoutlog)
+                        alertDialog.dismiss()
                     } else {
 
                     }
@@ -145,6 +135,7 @@ class BodyPartActivity : AppCompatActivity() {
 
     private fun getWorkoutIdFromBodyPart(bodyPart: String?): Int {
         // Implement the logic to convert bodyPart to workoutId
+        //TODO
         // This could be a lookup from a predefined list or another data source
         return 1 // Placeholder value
     }
