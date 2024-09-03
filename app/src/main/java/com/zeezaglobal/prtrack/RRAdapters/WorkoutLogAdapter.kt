@@ -28,6 +28,8 @@ class WorkoutLogAdapter (
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val workoutWithLogs = workoutLogs[position]
+
+        // Set workout name
         holder.workoutTextView.text = workoutWithLogs.workout.workoutName
 
         // Transform logs into data points for the chart

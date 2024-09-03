@@ -30,6 +30,7 @@ import com.zeezaglobal.prtrack.RoomDb.AppDatabase
 import com.zeezaglobal.prtrack.RoomDb.MyApp
 import com.zeezaglobal.prtrack.Utils.getCurrentTimeInEpoch
 import com.zeezaglobal.prtrack.Utils.getSampleWorkoutLogs
+import com.zeezaglobal.prtrack.ViewModels.CombinedViewModel
 
 import com.zeezaglobal.prtrack.ViewModels.LogsViewModel
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +44,7 @@ import java.util.Locale
 
 class BodyPartActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: LogsViewModel
+    private lateinit var viewModel: CombinedViewModel
     private lateinit var database: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +54,7 @@ class BodyPartActivity : AppCompatActivity() {
         setContentView(R.layout.activity_body_part)
         val bodyPartTextView: TextView = findViewById(R.id.heading)
         val button: TextView = findViewById(R.id.button)
-        viewModel = ViewModelProvider(this).get(LogsViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(CombinedViewModel::class.java)
         // Retrieve the body part information from the intent
         val bodyPart = intent.getStringExtra("BODY_PART")
 
@@ -64,17 +65,21 @@ class BodyPartActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.workoutLogs
-                    .onEach { workoutLogs ->
-                        // Update the adapter with the new data
-                        adapter.updateData(workoutLogs)
+                viewModel.workoutsWithLogs
+                    .onEach { workoutsWithLogs ->
+                        adapter.updateData(workoutsWithLogs)
                     }
-                    .launchIn(this) // Launch the flow collection in the current coroutine scope
+                    .launchIn(this)
             }
         }
 
-        // Fetch the workout logs
-        viewModel.getWorkoutLogs(1)
+        // Fetch the combined data
+        lifecycleScope.launch {
+            val bodyPartId = getBodyPartIdUsingIntent(bodyPart)
+            bodyPartId?.let {
+                viewModel.getWorkoutsWithLogsByBodyPartId(it)
+            }
+        }
 
 
         bodyPartTextView.text = bodyPart + " Workouts"

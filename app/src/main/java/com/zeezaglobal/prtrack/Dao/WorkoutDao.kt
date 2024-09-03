@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.zeezaglobal.prtrack.Entities.Workout
 import kotlinx.coroutines.flow.Flow
@@ -20,5 +21,7 @@ interface WorkoutDao {
     @Delete
     suspend fun deleteWorkout(workout: Workout)
 
-
+    @Transaction
+    @Query("SELECT * FROM workout WHERE bodyPartId = :bodyPartId")
+    suspend fun getWorkoutsByBodyPartId(bodyPartId: Int): List<Workout>
 }

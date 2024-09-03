@@ -18,17 +18,17 @@ import kotlinx.coroutines.launch
 class LogsViewModel(application: Application) : AndroidViewModel(application) {
     private val workoutLogDao: WorkoutLogDao = (application as MyApp).database.workoutLogDao()
 
-    private val _workoutLogs = MutableStateFlow<WorkoutWithLogs?>(null)
-    val workoutLogs: StateFlow<WorkoutWithLogs?> get() = _workoutLogs
+    private val _workoutLogs = MutableStateFlow<List<WorkoutLog>>(emptyList())
+    val workoutLogs: StateFlow<List<WorkoutLog>> get() = _workoutLogs
 
-    fun getWorkoutLogs(workoutId: Int) {
+    fun getWorkoutLogsByWorkoutId(workoutId: Int) {
         viewModelScope.launch {
             try {
-                val logs = workoutLogDao.getWorkoutWithLogsById(workoutId)
-                Log.d("LogsViewModel", "Fetched logs for workoutId $workoutId: $logs")
+                val logs = workoutLogDao.getWorkoutLogsByWorkoutId(workoutId)
                 _workoutLogs.value = logs
             } catch (e: Exception) {
-                Log.e("LogsViewModel", "Error fetching logs: ${e.message}")
+                // Handle any errors here
+                e.printStackTrace()
             }
         }
     }

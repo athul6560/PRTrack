@@ -23,11 +23,12 @@ interface WorkoutLogDao {
     @Delete
     suspend fun deleteWorkoutLog(log: WorkoutLog)
 
+    @Query("SELECT * FROM workout_log WHERE workoutId = :workoutId")
+    suspend fun getWorkoutLogsByWorkoutId(workoutId: Int): List<WorkoutLog>
 
-    @Query("SELECT workout_log.*, workout.workoutName FROM workout_log INNER JOIN workout ON workout_log.workoutId = workout.id WHERE workout_log.workoutId = :workoutId")
-    fun getWorkoutLogsByWorkoutId(workoutId: Int): Flow<List<WorkoutLogWithName>>
+/*    @Query("SELECT workout_log.*, workout.workoutName FROM workout_log INNER JOIN workout ON workout_log.workoutId = workout.id WHERE workout_log.workoutId = :workoutId")
+    fun getWorkoutLogsByWorkoutId(workoutId: Int): Flow<List<WorkoutLogWithName>>*/
 
-    @Transaction
-    @Query(" SELECT workout.id AS workoutId, workout.workoutName, workout.bodyPartId, workout_log.id AS logId, workout_log.weight, workout_log.date, workout_log.workoutId AS logWorkoutId FROM workout LEFT JOIN workout_log ON workout.id = workout_log.workoutId WHERE workout.id = :workoutId")
-    suspend fun getWorkoutWithLogsById(workoutId: Int): WorkoutWithLogs?
+
+
 }
