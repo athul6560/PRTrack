@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +20,8 @@ import java.util.Locale
 
 class WorkoutLogAdapter (
     private var workoutLogs: List<WorkoutWithLogs>,
-    private val context: Context
+    private val context: Context,
+    private val onAddWeightClick: (String) -> Unit
 ) : RecyclerView.Adapter<WorkoutLogAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,7 +37,10 @@ class WorkoutLogAdapter (
 
         // Transform logs into data points for the chart
         val dataPoints = transformLogsToDataPoints(workoutWithLogs)
-
+        // Add click listener to the button to show popup
+        holder.addWeightButton.setOnClickListener {
+            showAddWeightPopup(workoutWithLogs.workout.workoutName)
+        }
         // Create the line chart
         createLineChartView(
             context = context,
@@ -49,6 +55,34 @@ class WorkoutLogAdapter (
         )
     }
 
+    private fun showAddWeightPopup(workoutName: String) {
+        // Create a dialog
+        val dialog = android.app.Dialog(context)
+        dialog.setContentView(R.layout.dialog_add_weight)
+
+        // Get reference to dialog views
+        val workoutTextView = dialog.findViewById<TextView>(R.id.dialog_workout_textview)
+        val weightInput = dialog.findViewById<EditText>(R.id.dialog_weight_input)
+        val submitButton = dialog.findViewById<Button>(R.id.dialog_submit_button)
+
+        // Set workout name in the dialog
+        workoutTextView.text = "Add weight for $workoutName"
+
+        // Handle submit button click
+        submitButton.setOnClickListener {
+            val enteredWeight = weightInput.text.toString()
+            if (enteredWeight.isNotEmpty()) {
+                onAddWeightClick(enteredWeight)
+                dialog.dismiss()
+            } else {
+                weightInput.error = "Please enter a valid weight"
+            }
+        }
+
+        // Show the dialog
+        dialog.show()
+    }
+
     private fun transformLogsToDataPoints(workoutWithLogs: WorkoutWithLogs): List<Pair<String, Float>> {
         return workoutWithLogs.workoutLogs.map {
             val dayOfWeek = SimpleDateFormat("EEE", Locale.getDefault()).format(Date(it.date))
@@ -61,6 +95,7 @@ class WorkoutLogAdapter (
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val chartContainer: ViewGroup = itemView.findViewById(R.id.chartContainer)
         val workoutTextView: TextView = itemView.findViewById(R.id.workout_textview)
+        val addWeightButton: Button = itemView.findViewById(R.id.add_weight_button)
     }
 
     fun updateData(newWorkoutLogs: List<WorkoutWithLogs>) {

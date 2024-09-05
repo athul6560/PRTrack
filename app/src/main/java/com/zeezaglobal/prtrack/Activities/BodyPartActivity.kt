@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.NumberPicker
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -46,7 +47,7 @@ class BodyPartActivity : AppCompatActivity() {
 
     private lateinit var viewModel: CombinedViewModel
     private lateinit var database: AppDatabase
-
+    private lateinit var workoutLogAdapter: WorkoutLogAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -60,14 +61,20 @@ class BodyPartActivity : AppCompatActivity() {
 
         val recyclerView: RecyclerView = findViewById(R.id.recycle_review)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = WorkoutLogAdapter(emptyList(), this)
-        recyclerView.adapter = adapter
+        workoutLogAdapter = WorkoutLogAdapter(
+            emptyList(),
+            context = this
+        ) { weight ->
+            // This code will run when the button in a RecyclerView item is clicked
+            showAddWeightDialog(weight)
+        }
+        recyclerView.adapter = workoutLogAdapter
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.workoutsWithLogs
                     .onEach { workoutsWithLogs ->
-                        adapter.updateData(workoutsWithLogs)
+                        workoutLogAdapter.updateData(workoutsWithLogs)
                     }
                     .launchIn(this)
             }
@@ -90,6 +97,14 @@ class BodyPartActivity : AppCompatActivity() {
             showAddWorkoutDialog(bodyPart)
 
         }
+    }
+
+    private fun showAddWeightDialog(weight: String) {
+        Toast.makeText(
+            this,
+            "Add weight for ${weight}",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun showAddWorkoutDialog(bodyPart: String?) {
