@@ -24,4 +24,7 @@ interface WorkoutDao {
     @Transaction
     @Query("SELECT * FROM workout WHERE bodyPartId = :bodyPartId")
     suspend fun getWorkoutsByBodyPartId(bodyPartId: Int): List<Workout>
+
+    @Query("SELECT id FROM workout WHERE workoutName = :workoutName LIMIT 1")
+    fun getWorkoutIdByName(workoutName: String): Int
 }

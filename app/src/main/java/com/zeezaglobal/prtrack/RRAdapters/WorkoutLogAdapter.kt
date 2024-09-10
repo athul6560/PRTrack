@@ -21,7 +21,7 @@ import java.util.Locale
 class WorkoutLogAdapter (
     private var workoutLogs: List<WorkoutWithLogs>,
     private val context: Context,
-    private val onAddWeightClick: (String) -> Unit
+    private val onAddWeightClick: (String,String) -> Unit
 ) : RecyclerView.Adapter<WorkoutLogAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -72,7 +72,7 @@ class WorkoutLogAdapter (
         submitButton.setOnClickListener {
             val enteredWeight = weightInput.text.toString()
             if (enteredWeight.isNotEmpty()) {
-                onAddWeightClick(enteredWeight)
+                onAddWeightClick(enteredWeight,workoutName)
                 dialog.dismiss()
             } else {
                 weightInput.error = "Please enter a valid weight"

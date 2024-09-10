@@ -1,28 +1,19 @@
 package com.zeezaglobal.prtrack.Activities
 
-import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.zeezaglobal.prtrack.Entities.Workout
 import com.zeezaglobal.prtrack.Entities.WorkoutLog
 import com.zeezaglobal.prtrack.R
@@ -30,18 +21,13 @@ import com.zeezaglobal.prtrack.RRAdapters.WorkoutLogAdapter
 import com.zeezaglobal.prtrack.RoomDb.AppDatabase
 import com.zeezaglobal.prtrack.RoomDb.MyApp
 import com.zeezaglobal.prtrack.Utils.getCurrentTimeInEpoch
-import com.zeezaglobal.prtrack.Utils.getSampleWorkoutLogs
 import com.zeezaglobal.prtrack.ViewModels.CombinedViewModel
 
-import com.zeezaglobal.prtrack.ViewModels.LogsViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class BodyPartActivity : AppCompatActivity() {
 
@@ -54,7 +40,7 @@ class BodyPartActivity : AppCompatActivity() {
         database = (application as MyApp).database
         setContentView(R.layout.activity_body_part)
         val bodyPartTextView: TextView = findViewById(R.id.heading)
-        val button: TextView = findViewById(R.id.button)
+        val addNewWorkoutButton: TextView = findViewById(R.id.button)
         viewModel = ViewModelProvider(this).get(CombinedViewModel::class.java)
         // Retrieve the body part information from the intent
         val bodyPart = intent.getStringExtra("BODY_PART")
@@ -64,9 +50,9 @@ class BodyPartActivity : AppCompatActivity() {
         workoutLogAdapter = WorkoutLogAdapter(
             emptyList(),
             context = this
-        ) { weight ->
+        ) { weight,workoutName ->
             // This code will run when the button in a RecyclerView item is clicked
-            showAddWeightDialog(weight)
+            showAddWeightDialog(weight, workoutName)
         }
         recyclerView.adapter = workoutLogAdapter
 
@@ -93,18 +79,28 @@ class BodyPartActivity : AppCompatActivity() {
 
 
 
-        button.setOnClickListener {
+        addNewWorkoutButton.setOnClickListener {
             showAddWorkoutDialog(bodyPart)
 
         }
     }
 
-    private fun showAddWeightDialog(weight: String) {
-        Toast.makeText(
-            this,
-            "Add weight for ${weight}",
-            Toast.LENGTH_SHORT
-        ).show()
+    private fun showAddWeightDialog(weight: String,name:String) {
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                val workoutId = getWorkoutIdusingWorkout(name) // Fetch the workoutId
+
+                val workoutLog = WorkoutLog(
+                    weight = weight.toFloat(),
+                    date = getCurrentTimeInEpoch(),
+                    workoutId = workoutId
+                )
+                database.workoutLogDao().insertWorkoutLog(workoutLog)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@BodyPartActivity, "Weight added successfully", Toast.LENGTH_SHORT).show()
+
+                }
+            }}
     }
 
     private fun showAddWorkoutDialog(bodyPart: String?) {
@@ -134,13 +130,14 @@ class BodyPartActivity : AppCompatActivity() {
                             workoutName = editTextWorkoutName.text.toString(),
                             bodyPartId = bodyPartId
                         )
+                        database.workoutDao().insertWorkout(exercise)
                         val workoutlog = WorkoutLog(
                             weight = weightEdittext.text.toString().toFloatOrNull() ?: 0.0f,
                             date = getCurrentTimeInEpoch(),
-                            workoutId = 1
+                            workoutId = getWorkoutIdusingWorkout(exercise.workoutName)
                         )
 
-                        database.workoutDao().insertWorkout(exercise)
+
                         database.workoutLogDao().insertWorkoutLog(workoutlog)
                         alertDialog.dismiss()
                     } else {
@@ -151,6 +148,10 @@ class BodyPartActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    private fun getWorkoutIdusingWorkout(workoutName: String): Int {
+        return database.workoutDao().getWorkoutIdByName(workoutName)
     }
 
     private fun getWorkoutIdFromBodyPart(bodyPart: String?): Int {

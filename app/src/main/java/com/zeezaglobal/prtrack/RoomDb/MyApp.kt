@@ -19,6 +19,6 @@ class MyApp : Application() {
         val bodyPartDao = database.bodyPartDao()
 
         // Populate the database with dummy data
-        //populateDatabase(bodyPartDao)
+      //  populateDatabase(bodyPartDao)
     }
 }
