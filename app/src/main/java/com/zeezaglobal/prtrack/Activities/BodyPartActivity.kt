@@ -18,10 +18,16 @@ import com.zeezaglobal.prtrack.Entities.Workout
 import com.zeezaglobal.prtrack.Entities.WorkoutLog
 import com.zeezaglobal.prtrack.R
 import com.zeezaglobal.prtrack.RRAdapters.WorkoutLogAdapter
+import com.zeezaglobal.prtrack.Repositories.BodyPartRepository
+import com.zeezaglobal.prtrack.Repositories.WorkoutRepository
 import com.zeezaglobal.prtrack.RoomDb.AppDatabase
 import com.zeezaglobal.prtrack.RoomDb.MyApp
 import com.zeezaglobal.prtrack.Utils.getCurrentTimeInEpoch
+import com.zeezaglobal.prtrack.ViewModelFactopryt.BodyPartViewModelFactory
+import com.zeezaglobal.prtrack.ViewModelFactopryt.WorkoutViewModelFactory
+import com.zeezaglobal.prtrack.ViewModels.BodyPartViewModel
 import com.zeezaglobal.prtrack.ViewModels.CombinedViewModel
+import com.zeezaglobal.prtrack.ViewModels.WorkoutViewModel
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -32,21 +38,43 @@ import kotlinx.coroutines.withContext
 class BodyPartActivity : AppCompatActivity() {
 
     private lateinit var viewModel: CombinedViewModel
+    private lateinit var workoutViewModel: WorkoutViewModel
+    private lateinit var bodyPartViewModel: BodyPartViewModel
     private lateinit var database: AppDatabase
     private lateinit var workoutLogAdapter: WorkoutLogAdapter
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        database = (application as MyApp).database
         setContentView(R.layout.activity_body_part)
+        //view declaration
         val bodyPartTextView: TextView = findViewById(R.id.heading)
         val addNewWorkoutButton: TextView = findViewById(R.id.button)
+//object creation
+        val workoutRepository = WorkoutRepository((application as MyApp).database.workoutDao())
+        val bodyPartRepository = BodyPartRepository((application as MyApp).database.bodyPartDao())
+        val factory = WorkoutViewModelFactory(workoutRepository)
+        workoutViewModel = ViewModelProvider(this, factory).get(WorkoutViewModel::class.java)
+        val bodyPartViewModelFactory = BodyPartViewModelFactory(bodyPartRepository)
+         bodyPartViewModel = ViewModelProvider(this, bodyPartViewModelFactory).get(
+            BodyPartViewModel::class.java)
+
+
+
+        database = (application as MyApp).database
+
+
         viewModel = ViewModelProvider(this).get(CombinedViewModel::class.java)
         // Retrieve the body part information from the intent
         val bodyPart = intent.getStringExtra("BODY_PART")
 
         val recyclerView: RecyclerView = findViewById(R.id.recycle_review)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+
+
+
         workoutLogAdapter = WorkoutLogAdapter(
             emptyList(),
             context = this
@@ -130,7 +158,7 @@ class BodyPartActivity : AppCompatActivity() {
                             workoutName = editTextWorkoutName.text.toString(),
                             bodyPartId = bodyPartId
                         )
-                        database.workoutDao().insertWorkout(exercise)
+                        workoutViewModel.insertWorkout(exercise)
                         val workoutlog = WorkoutLog(
                             weight = weightEdittext.text.toString().toFloatOrNull() ?: 0.0f,
                             date = getCurrentTimeInEpoch(),
@@ -138,7 +166,7 @@ class BodyPartActivity : AppCompatActivity() {
                         )
 
 
-                        database.workoutLogDao().insertWorkoutLog(workoutlog)
+                       // database.workoutLogDao().insertWorkoutLog(workoutlog)
                         alertDialog.dismiss()
                     } else {
 
@@ -154,11 +182,22 @@ class BodyPartActivity : AppCompatActivity() {
         return database.workoutDao().getWorkoutIdByName(workoutName)
     }
 
-    private fun getWorkoutIdFromBodyPart(bodyPart: String?): Int {
-        // Implement the logic to convert bodyPart to workoutId
-        //TODO
-        // This could be a lookup from a predefined list or another data source
-        return 1 // Placeholder value
+    private suspend fun getWorkoutIdFromBodyPart(bodyPart: String?): Int? {
+        return if (bodyPart != null) {
+            withContext(Dispatchers.IO) {
+                // Fetch bodyPartId using the ViewModel
+                val bodyPartId = bodyPartViewModel.getBodyPartIdByNameSuspend(bodyPart)
+                bodyPartId?.let {
+                    // Return the found body part ID
+                    it
+                } ?: run {
+                    // Return null if the body part is not found
+                    null
+                }
+            }
+        } else {
+            null
+        }
     }
 
     private suspend fun getBodyPartIdUsingIntent(bodyPartName: String?): Int? {
