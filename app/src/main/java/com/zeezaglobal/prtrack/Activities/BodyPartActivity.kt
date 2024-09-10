@@ -165,6 +165,7 @@ class BodyPartActivity : AppCompatActivity() {
         return bodyPartName?.let { name ->
             withContext(Dispatchers.IO) {
                 database.bodyPartDao().getBodyPartIdByName(name)
+                //test
             }
         }
     }
