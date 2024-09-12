@@ -12,12 +12,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/workoutname"
         android:hint="Workout" />
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/weight"
-        android:inputType="numberDecimal"
-        android:hint="Weight" />
+
 
     <Button
         android:id="@+id/submit_button"

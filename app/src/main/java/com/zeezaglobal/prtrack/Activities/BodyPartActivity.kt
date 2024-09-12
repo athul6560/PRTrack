@@ -1,12 +1,9 @@
 package com.zeezaglobal.prtrack.Activities
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.zeezaglobal.prtrack.DialoguePopup.DialogManager
 import com.zeezaglobal.prtrack.Entities.Workout
 import com.zeezaglobal.prtrack.Entities.WorkoutLog
 import com.zeezaglobal.prtrack.R
@@ -42,47 +40,70 @@ class BodyPartActivity : AppCompatActivity() {
     private lateinit var bodyPartViewModel: BodyPartViewModel
     private lateinit var database: AppDatabase
     private lateinit var workoutLogAdapter: WorkoutLogAdapter
-
+    private val dialogManager by lazy { DialogManager(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_body_part)
-        //view declaration
+
         val bodyPartTextView: TextView = findViewById(R.id.heading)
         val addNewWorkoutButton: TextView = findViewById(R.id.button)
+        val recyclerView: RecyclerView = findViewById(R.id.recycle_review)
 //object creation
         val workoutRepository = WorkoutRepository((application as MyApp).database.workoutDao())
         val bodyPartRepository = BodyPartRepository((application as MyApp).database.bodyPartDao())
         val factory = WorkoutViewModelFactory(workoutRepository)
         workoutViewModel = ViewModelProvider(this, factory).get(WorkoutViewModel::class.java)
         val bodyPartViewModelFactory = BodyPartViewModelFactory(bodyPartRepository)
-         bodyPartViewModel = ViewModelProvider(this, bodyPartViewModelFactory).get(
-            BodyPartViewModel::class.java)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        bodyPartViewModel = ViewModelProvider(this, bodyPartViewModelFactory).get(
+            BodyPartViewModel::class.java
+        )
+
+        workoutLogAdapter = WorkoutLogAdapter(
+            emptyList(),
+            context = this
+        ) { weight, workoutName ->
+            // This code will run when the button in a RecyclerView item is clicked
+            showAddWeightDialog(weight, workoutName)
+        }
 
 
+        recyclerView.adapter = workoutLogAdapter
+
+
+        // Retrieve the body part information from the intent
+        val bodyPart = intent.getStringExtra("BODY_PART")
+
+
+//Button Clicks
+        addNewWorkoutButton.setOnClickListener {
+            if (bodyPart != null) {
+                showAddWorkoutDialog(bodyPart)
+            }
+
+        }
 
         database = (application as MyApp).database
 
 
         viewModel = ViewModelProvider(this).get(CombinedViewModel::class.java)
-        // Retrieve the body part information from the intent
-        val bodyPart = intent.getStringExtra("BODY_PART")
-
-        val recyclerView: RecyclerView = findViewById(R.id.recycle_review)
-        recyclerView.layoutManager = LinearLayoutManager(this)
 
 
 
 
-        workoutLogAdapter = WorkoutLogAdapter(
-            emptyList(),
-            context = this
-        ) { weight,workoutName ->
-            // This code will run when the button in a RecyclerView item is clicked
-            showAddWeightDialog(weight, workoutName)
-        }
-        recyclerView.adapter = workoutLogAdapter
+
+
+
+
+
+
+
+
+
+
+
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -107,31 +128,84 @@ class BodyPartActivity : AppCompatActivity() {
 
 
 
-        addNewWorkoutButton.setOnClickListener {
-            showAddWorkoutDialog(bodyPart)
 
+    }
+
+
+    private fun showAddWorkoutDialog(bodyPartName:String) {
+
+
+        dialogManager.showAddWorkoutDialog(bodyPartName) { workoutName, bodyPartName ->
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+
+                    val workout = getWorkoutIdFromBodyPart(bodyPartName)?.let {
+                        Workout(
+                            workoutName = workoutName,
+                            bodyPartId = it
+                        )
+                    }
+                    if (workout != null) {
+                        workoutViewModel.insertWorkout(workout)
+                    }
+
+
+
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@BodyPartActivity,
+                            "Workout added successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
     }
 
-    private fun showAddWeightDialog(weight: String,name:String) {
+    private fun getCurrentTimeInEpoch(): Long {
+        // Logic to get the current time in epoch format
+        return System.currentTimeMillis() / 1000
+    }
+
+
+
+
+
+
+    private fun showAddWeightDialog(weight: String, name: String) {
+        dialogManager.showAddWeightDialog("Workout Name") { enteredWeight ->
+            // Handle weight submission
+            saveWorkoutLog(enteredWeight, "Workout Name")
+        }
+
+
+    }
+
+    private fun saveWorkoutLog(enteredWeight: String, s: String) {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                val workoutId = getWorkoutIdusingWorkout(name) // Fetch the workoutId
+                val workoutId = getWorkoutIdusingWorkout(s) // Fetch the workoutId
 
                 val workoutLog = WorkoutLog(
-                    weight = weight.toFloat(),
+                    weight = enteredWeight.toFloat(),
                     date = getCurrentTimeInEpoch(),
                     workoutId = workoutId
                 )
                 database.workoutLogDao().insertWorkoutLog(workoutLog)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@BodyPartActivity, "Weight added successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@BodyPartActivity,
+                        "Weight added successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                 }
-            }}
+            }
+        }
     }
 
-    private fun showAddWorkoutDialog(bodyPart: String?) {
+   /* private fun showAddWorkoutDialog(bodyPart: String?) {
         val dialogBuilder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView = inflater.inflate(R.layout.dialog_add_workout, null)
@@ -166,7 +240,7 @@ class BodyPartActivity : AppCompatActivity() {
                         )
 
 
-                       // database.workoutLogDao().insertWorkoutLog(workoutlog)
+                        // database.workoutLogDao().insertWorkoutLog(workoutlog)
                         alertDialog.dismiss()
                     } else {
 
@@ -176,7 +250,7 @@ class BodyPartActivity : AppCompatActivity() {
         }
 
 
-    }
+    }*/
 
     private fun getWorkoutIdusingWorkout(workoutName: String): Int {
         return database.workoutDao().getWorkoutIdByName(workoutName)
