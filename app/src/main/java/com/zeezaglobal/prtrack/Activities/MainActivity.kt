@@ -22,12 +22,20 @@ class MainActivity : AppCompatActivity() {
 
         val relLayoutChest: RelativeLayout = findViewById(R.id.relLayoutChest)
         val relLayoutBiceps: RelativeLayout = findViewById(R.id.relLayoutBiceps)
+        val relLayoutCore: RelativeLayout = findViewById(R.id.relLayoutCore)
+        val relLayoutLegs: RelativeLayout = findViewById(R.id.relLayoutLegs)
+        val relLayoutTriceps: RelativeLayout = findViewById(R.id.relLayoutTriceps)
+        val relLayoutShoulder: RelativeLayout = findViewById(R.id.relLayoutShoulder)
 
         val parentLayout = findViewById<LinearLayout>(R.id.chartContainer)
         val clickListener = View.OnClickListener { view ->
             val bodyPart = when (view.id) {
                 R.id.relLayoutChest -> "Chest"
                 R.id.relLayoutBiceps -> "Biceps"
+                R.id.relLayoutLegs -> "Legs"
+                R.id.relLayoutTriceps -> "Triceps"
+                R.id.relLayoutShoulder -> "Shoulder"
+                R.id.relLayoutCore -> "Core"
 
                 else -> ""
             }
@@ -36,6 +44,10 @@ class MainActivity : AppCompatActivity() {
 
         relLayoutChest.setOnClickListener(clickListener)
         relLayoutBiceps.setOnClickListener(clickListener)
+        relLayoutLegs.setOnClickListener(clickListener)
+        relLayoutTriceps.setOnClickListener(clickListener)
+        relLayoutShoulder.setOnClickListener(clickListener)
+        relLayoutCore.setOnClickListener(clickListener)
 
         val dataPoints = listOf(
             Pair("Mon", 30f),

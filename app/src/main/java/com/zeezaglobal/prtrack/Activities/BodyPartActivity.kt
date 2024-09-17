@@ -20,7 +20,6 @@ import com.zeezaglobal.prtrack.Repositories.BodyPartRepository
 import com.zeezaglobal.prtrack.Repositories.WorkoutRepository
 import com.zeezaglobal.prtrack.RoomDb.AppDatabase
 import com.zeezaglobal.prtrack.RoomDb.MyApp
-import com.zeezaglobal.prtrack.Utils.getCurrentTimeInEpoch
 import com.zeezaglobal.prtrack.ViewModelFactopryt.BodyPartViewModelFactory
 import com.zeezaglobal.prtrack.ViewModelFactopryt.WorkoutViewModelFactory
 import com.zeezaglobal.prtrack.ViewModels.BodyPartViewModel
@@ -48,7 +47,7 @@ class BodyPartActivity : AppCompatActivity() {
         setContentView(R.layout.activity_body_part)
 
         val bodyPartTextView: TextView = findViewById(R.id.heading)
-        val addNewWorkoutButton: TextView = findViewById(R.id.button)
+        val addNewWorkoutButton: TextView = findViewById(R.id.add_new_workout_btn)
         val recyclerView: RecyclerView = findViewById(R.id.recycle_review)
 //object creation
         val workoutRepository = WorkoutRepository((application as MyApp).database.workoutDao())
