@@ -63,9 +63,9 @@ class BodyPartActivity : AppCompatActivity() {
         workoutLogAdapter = WorkoutLogAdapter(
             emptyList(),
             context = this
-        ) { weight, workoutName ->
+        ) {  workoutName ->
             // This code will run when the button in a RecyclerView item is clicked
-            showAddWeightDialog(weight, workoutName)
+            showAddWeightDialog(workoutName)
         }
 
 
@@ -172,10 +172,10 @@ class BodyPartActivity : AppCompatActivity() {
 
 
 
-    private fun showAddWeightDialog(weight: String, name: String) {
-        dialogManager.showAddWeightDialog("Workout Name") { enteredWeight ->
+    private fun showAddWeightDialog(name: String) {
+        dialogManager.showAddWeightDialog(name) { enteredWeight ->
             // Handle weight submission
-            saveWorkoutLog(enteredWeight, "Workout Name")
+            saveWorkoutLog(enteredWeight, name)
         }
 
 

@@ -21,7 +21,7 @@ import java.util.Locale
 class WorkoutLogAdapter (
     private var workoutLogs: List<WorkoutWithLogs>,
     private val context: Context,
-    private val onAddWeightClick: (String,String) -> Unit
+    private val onAddWeightClick: (String) -> Unit
 ) : RecyclerView.Adapter<WorkoutLogAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -56,31 +56,7 @@ class WorkoutLogAdapter (
     }
 
     private fun showAddWeightPopup(workoutName: String) {
-        // Create a dialog
-        val dialog = android.app.Dialog(context)
-        dialog.setContentView(R.layout.dialog_add_weight)
-
-        // Get reference to dialog views
-        val workoutTextView = dialog.findViewById<TextView>(R.id.dialog_workout_textview)
-        val weightInput = dialog.findViewById<EditText>(R.id.dialog_weight_input)
-        val submitButton = dialog.findViewById<Button>(R.id.dialog_submit_button)
-
-        // Set workout name in the dialog
-        workoutTextView.text = "Add weight for $workoutName"
-
-        // Handle submit button click
-        submitButton.setOnClickListener {
-            val enteredWeight = weightInput.text.toString()
-            if (enteredWeight.isNotEmpty()) {
-                onAddWeightClick(enteredWeight,workoutName)
-                dialog.dismiss()
-            } else {
-                weightInput.error = "Please enter a valid weight"
-            }
-        }
-
-        // Show the dialog
-        dialog.show()
+        onAddWeightClick(workoutName)
     }
 
     private fun transformLogsToDataPoints(workoutWithLogs: WorkoutWithLogs): List<Pair<String, Float>> {
