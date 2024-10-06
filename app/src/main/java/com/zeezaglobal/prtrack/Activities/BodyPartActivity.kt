@@ -11,19 +11,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.zeezaglobal.prtrack.DialoguePopup.DialogManager
 import com.zeezaglobal.prtrack.Entities.Workout
 import com.zeezaglobal.prtrack.Entities.WorkoutLog
 import com.zeezaglobal.prtrack.R
 import com.zeezaglobal.prtrack.RRAdapters.WorkoutLogAdapter
 import com.zeezaglobal.prtrack.Repositories.BodyPartRepository
+import com.zeezaglobal.prtrack.Repositories.WorkoutLogRepository
 import com.zeezaglobal.prtrack.Repositories.WorkoutRepository
 import com.zeezaglobal.prtrack.RoomDb.AppDatabase
 import com.zeezaglobal.prtrack.RoomDb.MyApp
 import com.zeezaglobal.prtrack.ViewModelFactopryt.BodyPartViewModelFactory
 import com.zeezaglobal.prtrack.ViewModelFactopryt.WorkoutViewModelFactory
 import com.zeezaglobal.prtrack.ViewModels.BodyPartViewModel
-import com.zeezaglobal.prtrack.ViewModels.CombinedViewModel
 import com.zeezaglobal.prtrack.ViewModels.WorkoutViewModel
 
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +35,8 @@ import kotlinx.coroutines.withContext
 
 class BodyPartActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: CombinedViewModel
+
+    private var id: Int = 0
     private lateinit var workoutViewModel: WorkoutViewModel
     private lateinit var bodyPartViewModel: BodyPartViewModel
     private lateinit var database: AppDatabase
@@ -47,14 +49,16 @@ class BodyPartActivity : AppCompatActivity() {
         setContentView(R.layout.activity_body_part)
 
         val bodyPartTextView: TextView = findViewById(R.id.heading)
-        val addNewWorkoutButton: TextView = findViewById(R.id.add_new_workout_btn)
+
+        val addNewWorkoutButton: ExtendedFloatingActionButton =findViewById(R.id.add_new_workout_btn)
         val recyclerView: RecyclerView = findViewById(R.id.recycle_review)
 //object creation
         val workoutRepository = WorkoutRepository((application as MyApp).database.workoutDao())
         val bodyPartRepository = BodyPartRepository((application as MyApp).database.bodyPartDao())
+        val workoutLogRepository = WorkoutLogRepository((application as MyApp).database.workoutLogDao())
         val factory = WorkoutViewModelFactory(workoutRepository)
         workoutViewModel = ViewModelProvider(this, factory).get(WorkoutViewModel::class.java)
-        val bodyPartViewModelFactory = BodyPartViewModelFactory(bodyPartRepository)
+        val bodyPartViewModelFactory = BodyPartViewModelFactory(bodyPartRepository,workoutRepository,workoutLogRepository)
         recyclerView.layoutManager = LinearLayoutManager(this)
         bodyPartViewModel = ViewModelProvider(this, bodyPartViewModelFactory).get(
             BodyPartViewModel::class.java
@@ -87,7 +91,6 @@ class BodyPartActivity : AppCompatActivity() {
         database = (application as MyApp).database
 
 
-        viewModel = ViewModelProvider(this).get(CombinedViewModel::class.java)
 
 
 
@@ -104,23 +107,24 @@ class BodyPartActivity : AppCompatActivity() {
 
 
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.workoutsWithLogs
-                    .onEach { workoutsWithLogs ->
-                        workoutLogAdapter.updateData(workoutsWithLogs)
-                    }
-                    .launchIn(this)
-            }
-        }
-
-        // Fetch the combined data
         lifecycleScope.launch {
             val bodyPartId = getBodyPartIdUsingIntent(bodyPart)
             bodyPartId?.let {
-                viewModel.getWorkoutsWithLogsByBodyPartId(it)
+                bodyPartViewModel.getWorkoutsWithLogsByBodyPartId(it)
+                 id = it
             }
         }
+
+        // Observe the LiveData
+        bodyPartViewModel.workoutsWithLogs.observe(this, { workoutLogs ->
+            workoutLogs?.let {
+                bodyPartViewModel.getWorkoutsWithLogsByBodyPartId(id)
+                workoutLogAdapter.updateData(workoutLogs)
+            }
+        })
+
+        // Fetch the combined data
+
 
 
         bodyPartTextView.text = bodyPart + " Workouts"

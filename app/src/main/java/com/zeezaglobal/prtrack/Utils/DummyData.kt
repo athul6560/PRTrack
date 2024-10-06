@@ -10,7 +10,8 @@ val dummybodyparts = listOf(
     BodyPart( bodyPartName = "Triceps"),
     BodyPart( bodyPartName = "Shoulder"),
     BodyPart( bodyPartName = "Back"),
-    BodyPart( bodyPartName = "Core")
+    BodyPart( bodyPartName = "Core"),
+    BodyPart( bodyPartName = "Legs")
 
 )
 

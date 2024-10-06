@@ -24,7 +24,7 @@ interface WorkoutLogDao {
     suspend fun deleteWorkoutLog(log: WorkoutLog)
 
     @Query("SELECT * FROM workout_log WHERE workoutId = :workoutId")
-    suspend fun getWorkoutLogsByWorkoutId(workoutId: Int): List<WorkoutLog>
+    fun getWorkoutLogsByWorkoutId(workoutId: Int): Flow<List<WorkoutLog>>
 
 /*    @Query("SELECT workout_log.*, workout.workoutName FROM workout_log INNER JOIN workout ON workout_log.workoutId = workout.id WHERE workout_log.workoutId = :workoutId")
     fun getWorkoutLogsByWorkoutId(workoutId: Int): Flow<List<WorkoutLogWithName>>*/
