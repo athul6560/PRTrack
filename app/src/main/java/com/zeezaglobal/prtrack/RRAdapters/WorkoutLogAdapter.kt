@@ -2,6 +2,7 @@ package com.zeezaglobal.prtrack.RRAdapters
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +40,7 @@ class WorkoutLogAdapter (
         val dataPoints = transformLogsToDataPoints(workoutWithLogs)
         // Add click listener to the button to show popup
         holder.addWeightButton.setOnClickListener {
+            Log.d("Basic Testing", "showAddWeightDialog: ${workoutWithLogs.workout.workoutName}")
             showAddWeightPopup(workoutWithLogs.workout.workoutName)
         }
         // Create the line chart
@@ -56,6 +58,7 @@ class WorkoutLogAdapter (
     }
 
     private fun showAddWeightPopup(workoutName: String) {
+        Log.d("Basic Testing", "showAddWeightDialog: $workoutName")
         onAddWeightClick(workoutName)
     }
 

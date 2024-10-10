@@ -1,6 +1,7 @@
 package com.zeezaglobal.prtrack.Activities
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -23,9 +24,7 @@ import com.zeezaglobal.prtrack.Repositories.WorkoutRepository
 import com.zeezaglobal.prtrack.RoomDb.AppDatabase
 import com.zeezaglobal.prtrack.RoomDb.MyApp
 import com.zeezaglobal.prtrack.ViewModelFactopryt.BodyPartViewModelFactory
-import com.zeezaglobal.prtrack.ViewModelFactopryt.WorkoutViewModelFactory
 import com.zeezaglobal.prtrack.ViewModels.BodyPartViewModel
-import com.zeezaglobal.prtrack.ViewModels.WorkoutViewModel
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -37,7 +36,7 @@ class BodyPartActivity : AppCompatActivity() {
 
 
     private var id: Int = 0
-    private lateinit var workoutViewModel: WorkoutViewModel
+
     private lateinit var bodyPartViewModel: BodyPartViewModel
     private lateinit var database: AppDatabase
     private lateinit var workoutLogAdapter: WorkoutLogAdapter
@@ -56,8 +55,7 @@ class BodyPartActivity : AppCompatActivity() {
         val workoutRepository = WorkoutRepository((application as MyApp).database.workoutDao())
         val bodyPartRepository = BodyPartRepository((application as MyApp).database.bodyPartDao())
         val workoutLogRepository = WorkoutLogRepository((application as MyApp).database.workoutLogDao())
-        val factory = WorkoutViewModelFactory(workoutRepository)
-        workoutViewModel = ViewModelProvider(this, factory).get(WorkoutViewModel::class.java)
+
         val bodyPartViewModelFactory = BodyPartViewModelFactory(bodyPartRepository,workoutRepository,workoutLogRepository)
         recyclerView.layoutManager = LinearLayoutManager(this)
         bodyPartViewModel = ViewModelProvider(this, bodyPartViewModelFactory).get(
@@ -93,20 +91,6 @@ class BodyPartActivity : AppCompatActivity() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         lifecycleScope.launch {
             val bodyPartId = getBodyPartIdUsingIntent(bodyPart)
             bodyPartId?.let {
@@ -118,8 +102,9 @@ class BodyPartActivity : AppCompatActivity() {
         // Observe the LiveData
         bodyPartViewModel.workoutsWithLogs.observe(this, { workoutLogs ->
             workoutLogs?.let {
-                bodyPartViewModel.getWorkoutsWithLogsByBodyPartId(id)
+              //  bodyPartViewModel.getWorkoutsWithLogsByBodyPartId(id)
                 workoutLogAdapter.updateData(workoutLogs)
+                Log.d("Basic Testing", "onCreate: $workoutLogs")
             }
         })
 
@@ -149,7 +134,7 @@ class BodyPartActivity : AppCompatActivity() {
                         )
                     }
                     if (workout != null) {
-                        workoutViewModel.insertWorkout(workout)
+                        bodyPartViewModel.insertWorkout(workout)
                     }
 
 
@@ -177,6 +162,7 @@ class BodyPartActivity : AppCompatActivity() {
 
 
     private fun showAddWeightDialog(name: String) {
+        Log.d("Basic Testing", "showAddWeightDialog: $name")
         dialogManager.showAddWeightDialog(name) { enteredWeight ->
             // Handle weight submission
             saveWorkoutLog(enteredWeight, name)

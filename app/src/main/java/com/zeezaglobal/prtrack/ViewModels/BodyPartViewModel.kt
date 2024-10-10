@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zeezaglobal.prtrack.Entities.BodyPart
+import com.zeezaglobal.prtrack.Entities.Workout
 import com.zeezaglobal.prtrack.Entities.WorkoutWithLogs
 import com.zeezaglobal.prtrack.Repositories.BodyPartRepository
 import com.zeezaglobal.prtrack.Repositories.WorkoutLogRepository
@@ -26,9 +27,21 @@ class BodyPartViewModel (
 ) : ViewModel() {
     private val _workoutsWithLogs = MutableLiveData<List<WorkoutWithLogs>>(emptyList())
     val workoutsWithLogs: LiveData<List<WorkoutWithLogs>> get() = _workoutsWithLogs
+    // Store the current bodyPartId to use it later when inserting a workout
+    private var currentBodyPartId: Int? = null
     // Get all body parts
+    fun insertWorkout(workoutName: Workout) {
+        viewModelScope.launch {
 
+            workoutRepository.insertWorkout(workoutName)
+            // Refresh data after inserting the workout
+            currentBodyPartId?.let {
+                getWorkoutsWithLogsByBodyPartId(it)
+            }
+        }
+    }
     fun getWorkoutsWithLogsByBodyPartId(bodyPartId: Int) {
+        currentBodyPartId = bodyPartId
         viewModelScope.launch {
             try {
                 // Fetch the workouts by bodyPartId as a Flow
