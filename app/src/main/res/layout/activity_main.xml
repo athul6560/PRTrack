@@ -513,15 +513,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/horizontalScrollView" />
 
-    <GridLayout
-        android:id="@+id/contributionGrid"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:columnCount="7"
-        android:rowCount="6"
-        app:layout_constraintBottom_toBottomOf="parent"
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+       android:layout_margin="20dp"
+        android:padding="20dp"
+        android:background="@drawable/rounded_gradient"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5">
-    </GridLayout>
+        <GridLayout
+            android:id="@+id/contributionGrid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="7"
+            android:rowCount="6"
+          android:layout_centerInParent="true"/>
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

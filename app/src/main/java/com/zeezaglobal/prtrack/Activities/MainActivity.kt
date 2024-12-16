@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         val totalGapSpace = (columns - 1) * margin
         val rectWidth = (screenWidth - padding - totalGapSpace) / columns
         val rectHeight = rectWidth / 2 // Rectangle aspect ratio
-        return Triple(rectWidth, rectHeight, margin)
+        return Triple(rectWidth-40, rectHeight, margin)
     }
 
     private fun generateMockActivityData(): List<Int> {
