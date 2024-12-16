@@ -28,11 +28,11 @@ class RectangleView @JvmOverloads constructor(
 
     private fun getColorForActivity(activity: Int): Int {
         return when (activity) {
-            0 -> Color.parseColor("#000000") // Light blue (low activity)
-            1 -> Color.parseColor("#B2EBF2")
-            2 -> Color.parseColor("#80DEEA")
-            3 -> Color.parseColor("#4DD0E1")
-            4 -> Color.parseColor("#00BCD4") // Darker blue (high activity)
+            0 -> Color.parseColor("#E6EBFF") // Lightest blue (lowest activity)
+            1 -> Color.parseColor("#A3C6FF")
+            2 -> Color.parseColor("#6FAEFF")
+            3 -> Color.parseColor("#2A91FF")
+            4 -> Color.parseColor("#0A84FF")
             else -> Color.BLACK
         }
     }

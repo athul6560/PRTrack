@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         relLayoutBack.setOnClickListener(clickListener)
 
 
-        val contributionGrid = findViewById<GridLayout>(R.id.contributionGrid)
+        val contributionGrid = findViewById<GridLayout>(R.id.contributionGrid1)
 
         val (rectWidth, rectHeight, margin) = calculateRectangleSizeAndMargin()
 
