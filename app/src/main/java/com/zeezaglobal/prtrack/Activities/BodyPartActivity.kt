@@ -179,7 +179,8 @@ class BodyPartActivity : AppCompatActivity() {
                 val workoutLog = WorkoutLog(
                     weight = enteredWeight.toFloat(),
                     date = getCurrentTimeInEpoch(),
-                    workoutId = workoutId
+                    workoutId = workoutId,
+                    sets = 10
                 )
                 database.workoutLogDao().insertWorkoutLog(workoutLog)
                 withContext(Dispatchers.Main) {

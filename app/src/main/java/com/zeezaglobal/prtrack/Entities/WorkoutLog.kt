@@ -19,5 +19,6 @@ data class WorkoutLog(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val weight: Float,
     val date: Long,
-    val workoutId: Int
+    val workoutId: Int,
+    val sets: Int
 )
